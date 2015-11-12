@@ -1,0 +1,9 @@
+{application, naga_mail, [
+    {description,  "Naga Mail Service for naga-framework."},
+    {vsn,          "0.1"},
+    {applications, [kernel, stdlib, naga]},
+    {modules, []},
+    {registered,   []},
+    {mod, { naga_mail,   []}},
+    {env, []}
+]}.
