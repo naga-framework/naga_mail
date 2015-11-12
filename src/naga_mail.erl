@@ -10,6 +10,6 @@ stop(_)    -> ok.
 init([])   -> 
               { ok, { { one_for_one, 5, 10 }, 
 	                [
-                         ?CHILD(naga_mail, worker, [])
+                         ?CHILD(naga_smtp, worker, [])
 	                ] 
               }}.
