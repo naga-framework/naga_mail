@@ -1,5 +1,5 @@
 {application, naga_mail, [
-    {description,  "Naga Mail Service for naga-framework."},
+    {description,  "Naga Mail Service."},
     {vsn,          "0.1"},
     {applications, [kernel, stdlib, naga]},
     {modules, []},
