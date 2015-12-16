@@ -24,15 +24,15 @@ domain()         -> {domain,  env(naga_mail,smtp_server_domain,   "localhost")}.
 ip()             -> {address, env(naga_mail,smtp_server_address,  {0, 0, 0, 0})}.
 protocol()       -> {protocol,env(naga_mail,smtp_server_protocol, tcp)}.
 env(A,K,D)       -> application:get_env(A,K,D).
-
 start_link()     -> A = [port(),domain(),ip(),protocol()],start_link([A]).
 start_link(Args) -> gen_smtp_server:start_link({local, ?MODULE}, ?MODULE, Args).
+atom(A,C)        -> list_to_atom(to_list(A) ++"_" ++ to_list(C)).
 
 init(Hostname, SessionCount, PeerName, Options) ->
     case SessionCount > 20 of false ->
-            App = wf:config(naga_mail,app, naga_mail),
-            In  = wf:atom([App,incoming_mail]),
-            Out = wf:atom([App,outgoing_mail]),
+            App = env(naga_mail,app,naga_mail),
+            In  = env(naga_mail,incoming,atom(App,incoming_mail)),
+            Out = env(naga_mail,outgoing,atom(App,outgoing_mail)),
             State = #state{options = Options, peer=PeerName, hostname=Hostname, app=App, incoming=In, outgoing=Out},
             Banner = io_lib:format("~s ESMTP Naga ~s", [State#state.hostname, ?NAGA_VERSION]),
             {ok, Banner, State};
@@ -95,8 +95,7 @@ add_received_header(Data, MsgId, State) ->
         <<"\r\n\tby ">>, State#state.hostname, <<" with ESMTP (Naga ">>, ?NAGA_VERSION, <<")">>,
         <<"\r\n\t(envelope-from <">>, filter_string(State#state.from), <<">)">>, 
         <<"\r\n\tid ">>, MsgId, 
-        %%FIXME
-        <<"; ">>, %%z_dateformat:format(calendar:local_time(), "r", []),
+        <<"; ">>, erlydtl_dateformat:format("r"),
         <<"\r\n">>,
         Data
     ]).
